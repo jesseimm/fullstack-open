@@ -1,0 +1,20 @@
+title teht 0.4
+
+kayttaja->selain:
+note left of selain
+    käyttäjä kirjoittaa tekstiä input kenttään
+    ja painaa talleta
+end note
+selain->palvelin: POST <osoite>, data
+palvelin->selain: 302, redirect
+selain->palvelin: GET notes
+palvelin->selain: 200, document
+selain->palvelin: GET main.css
+palvelin->selain: 200, main.css
+selain->palvelin: GET main.js
+palvelin->selain: 200, main.js
+selain->palvelin: GET data.json
+palvelin->selain: 200, data.json
+note left of selain:
+    selain suorittaa koodinsa ja piirtää data.json
+    perusteella muistiinpanot käyttäjän nähtäville

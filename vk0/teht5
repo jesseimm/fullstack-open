@@ -1,0 +1,18 @@
+title teht 0.5
+
+kayttaja->selain:
+note left of selain
+    käyttäjä kirjoittaa selaim osoitekenttään
+    https://fullstack-exampleapp.herokuapp.com/spa
+end note
+selain->palvelin: GET osoite
+palvelin->selain: 200, spa (response)
+selain->palvelin: GET main.css
+palvelin->selain: 200, main.css
+selain->palvelin: GET spa.js
+palvelin->selain: 200, spa.js
+selain->palvelin: GET data.json
+palvelin->selain: 200, data.json
+note left of selain:
+    selain suorittaa koodinsa ja piirtää data.json
+    perusteella muistiinpanot käyttäjän nähtäville

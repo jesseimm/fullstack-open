@@ -1,0 +1,17 @@
+Kuvan voi piirtää osoitteessa https://www.websequencediagrams.com/
+
+title teht 0.3
+
+kayttaja->selain:
+note left of selain
+    kayttaja kirjoittaa osoiteriville
+    https://fullstack-exampleapp.herokuapp.com/notes
+end note
+selain->palvelin: GET <osoite>
+palvelin->selain: status 200, HTML
+selain->palvelin: GET main.css
+palvelin->selain: main.css
+selain->palvelin: GET main.js
+palvelin->selain: main.js
+note left of selain:
+    selain näyttää ja suorittaa saadut tiedostot ja koodit

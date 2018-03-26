@@ -1,0 +1,14 @@
+title teht 0.6
+
+kayttaja->selain:
+note left of selain
+    käyttäjä kirjoittaa tekstiä spa -version input kenttään
+    ja painaa talleta
+end note
+selain->selain: lisää uusi note sisäiseen tietorakenteeseen ja piirrä se näytölle
+selain->palvelin: POST, deactivate
+palvelin->selain: 201 (Created), data
+note left of selain:
+    kaikki tarpeellinen on jo piirretty käyttäjälle. Vastausdatan 
+    perusteella voitaisiin kuitenkin tarvittaessa näyttää vaikkapa
+    virheviesti käyttäjälle.
