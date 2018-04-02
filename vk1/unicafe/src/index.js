@@ -18,9 +18,7 @@ const Statistics = ({statistics}) => {
     }, 0)
 
     const positives = statistics.find(curr => curr.nimi === 'hyva').palaute
-
     const all = statistics.reduce((acc, curr) => {return acc + curr.palaute}, 0)
-
     const positivesPercentage = (positives / all * 100).toFixed(1)
 
     if(all > 0) {
