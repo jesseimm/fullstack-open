@@ -5,18 +5,21 @@ import ReactDOM from 'react-dom';
 
 const Otsikko = ({otsikko}) => <h1>{otsikko}</h1>
 
-const Statistic = ({nimi, palaute}) => <tr><td>{nimi}</td> <td>{palaute}</td></tr>
+const Statistic = ({nimi, palaute}) => <tr><td>{nimi}</td><td>{palaute}</td></tr>
 
 const Statistics = ({statistics}) => {
-    const statsAvg = statistics.map(curr => {
-        if(curr.nimi === 'hyva') return curr.palaute * 1
-        else if(curr.nimi === 'neutraali') return 0
-        else return (curr.palaute * -1)
-    }).reduce((acc, curr) => acc + curr)
+    const statsAvg = statistics.reduce((acc, curr) => {
+        const nimi = curr.nimi
+        const palaute = curr.palaute
+
+        if(nimi === 'hyva') return acc + palaute * 1
+        else if(nimi === 'neutraali') return acc + 0
+        else return acc + palaute * -1
+    }, 0)
 
     const positives = statistics.find(curr => curr.nimi === 'hyva').palaute
-    const all = statistics.map(curr => curr.palaute)
-                          .reduce((acc, curr) => acc + curr)
+
+    const all = statistics.reduce((acc, curr) => {return acc + curr.palaute}, 0)
 
     const positivesPercentage = (positives / all * 100).toFixed(1)
 
