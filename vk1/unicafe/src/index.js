@@ -1,12 +1,42 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+
+
 const Otsikko = ({otsikko}) => <h1>{otsikko}</h1>
+
 const Statistic = ({nimi, palaute}) => <p>{nimi} {palaute}</p>
 const Statistics = ({statistics}) => {
-    return statistics.map((statistic) => {
-            return <Statistic key={statistic.nimi} {...statistic}/>
-        })
+
+    const statsAvg = statistics.map(curr => {
+        if(curr.nimi === 'hyva') return curr.palaute * 1
+        else if(curr.nimi === 'neutraali') return 0
+        else return (curr.palaute * -1)
+    }).reduce((acc, curr) => acc + curr)
+
+    const positives = statistics.find(curr => curr.nimi === 'hyva').palaute
+    const all = statistics.map(curr => curr.palaute)
+                          .reduce((acc, curr) => acc + curr)
+
+    const positivesPercentage = (positives / all * 100).toFixed(1)
+
+    if(all > 0) {
+        return (
+            <div>
+                {statistics.map((statistic) => {
+                    return <Statistic key={statistic.nimi} {...statistic}/>
+                })}
+
+                <Statistic nimi={'keskiarvo'} palaute={statsAvg} />           
+                <Statistic nimi={'positiivisia'} palaute= {positivesPercentage + '%'} />
+            </div>
+    
+        )
+    } else {
+        return (
+            <p>ei yhtään palautetta</p>
+        )
+    } 
 }
 
 const Button = ({nimi, onclick}) => <button onClick={() => onclick(nimi)}>{nimi}</button> 
@@ -27,7 +57,6 @@ class App extends React.Component {
                 {
                     nimi: 'hyva',
                     palaute: 0
-                    
                 },
                 {
                     nimi: 'neutraali',
@@ -46,7 +75,6 @@ class App extends React.Component {
         const i = newFields.findIndex(element => element.nimi === nimi)
         const oldObject = newFields[i]
         newFields[i] = {...oldObject, palaute: oldObject.palaute + 1}
-        console.log
         this.setState({
             fields: newFields
         })
