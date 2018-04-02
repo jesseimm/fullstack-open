@@ -5,9 +5,9 @@ import ReactDOM from 'react-dom';
 
 const Otsikko = ({otsikko}) => <h1>{otsikko}</h1>
 
-const Statistic = ({nimi, palaute}) => <p>{nimi} {palaute}</p>
-const Statistics = ({statistics}) => {
+const Statistic = ({nimi, palaute}) => <tr><td>{nimi}</td> <td>{palaute}</td></tr>
 
+const Statistics = ({statistics}) => {
     const statsAvg = statistics.map(curr => {
         if(curr.nimi === 'hyva') return curr.palaute * 1
         else if(curr.nimi === 'neutraali') return 0
@@ -22,15 +22,16 @@ const Statistics = ({statistics}) => {
 
     if(all > 0) {
         return (
-            <div>
-                {statistics.map((statistic) => {
-                    return <Statistic key={statistic.nimi} {...statistic}/>
-                })}
+            <table>
+                <tbody>
+                    {statistics.map((statistic) => {
+                        return <Statistic key={statistic.nimi} {...statistic}/>
+                    })}
 
-                <Statistic nimi={'keskiarvo'} palaute={statsAvg} />           
-                <Statistic nimi={'positiivisia'} palaute= {positivesPercentage + '%'} />
-            </div>
-    
+                    <Statistic nimi={'keskiarvo'} palaute={statsAvg} />           
+                    <Statistic nimi={'positiivisia'} palaute= {positivesPercentage + '%'} />
+                </tbody>
+            </table>
         )
     } else {
         return (
@@ -40,6 +41,7 @@ const Statistics = ({statistics}) => {
 }
 
 const Button = ({nimi, onclick}) => <button onClick={() => onclick(nimi)}>{nimi}</button> 
+
 const Buttons = ({nimet, onclick}) => 
         nimet.map(nimi => 
                     <Button
