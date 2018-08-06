@@ -64,7 +64,21 @@ class App extends React.Component {
     return persons.filter(person => person.name.toLowerCase().includes(rajaus));
   }
 
-  changeNumber(newPerson)
+  getPersonId(newPerson) {
+    const person = this.state.persons.find(
+      person => person.name === newPerson.name
+    );
+
+    return person ? person.id : undefined;
+  }
+
+  changeNumber(newPerson) {
+    const id = this.getPersonId(newPerson);
+    if (id) {
+      Persons.update(id, newPerson).then(this.updatePersons);
+    }
+    return id;
+  }
 
   onSubmit(e) {
     e.preventDefault();
@@ -73,13 +87,9 @@ class App extends React.Component {
       number: this.state.newNumber
     };
 
-    const person = this.state.persons.find(
-      person => person.name === newPerson.name
-    );
-
-    person
-      ? Persons.update(person.id, newPerson).then(this.updatePersons)
-      : Persons.create(newPerson).then(this.updatePersons);
+    if (!this.changeNumber(newPerson)) {
+      Persons.create(newPerson).then(this.updatePersons);
+    }
   }
 
   render() {
