@@ -1,19 +1,23 @@
 import React from "react";
-import Axios from "axios";
+import Persons from "./services/persons";
 
-const Tietue = ({ person }) => {
+const Tietue = ({ person, removePerson }) => {
   return (
     <p>
-      {person.name} {person.number}{" "}
+      {person.name}
+      {person.number}
+      <button onClick={() => removePerson(person.id)}>remove</button>
     </p>
   );
 };
 
-const Numerot = ({ persons }) => {
+const Numerot = ({ persons, removePerson }) => {
   return (
     <div>
       <h2>Numerot</h2>
-      {persons.map(person => <Tietue key={person.name} person={person} />)}
+      {persons.map(person => (
+        <Tietue key={person.id} person={person} removePerson={removePerson} />
+      ))}
     </div>
   );
 };
@@ -24,17 +28,32 @@ class App extends React.Component {
     this.state = {
       persons: [],
       newName: "",
-      newPhone: "",
+      newNumber: "",
       rajaus: ""
     };
 
     this.onSubmit = this.onSubmit.bind(this);
     this.getList = this.getList.bind(this);
+    this.removePerson = this.removePerson.bind(this);
+    this.updatePersons = this.updatePersons.bind(this);
   }
 
   componentDidMount() {
-    Axios.get("http://localhost:3001/persons").then(response => {
-      this.setState({ persons: response.data });
+    Persons.getAll().then(persons => {
+      this.setState({ persons: persons.data });
+    });
+  }
+
+  removePerson(id) {
+    Persons.remove(id);
+    this.setState({
+      persons: this.state.persons.filter(person => person.id !== id)
+    });
+  }
+
+  updatePersons() {
+    Persons.getAll().then(persons => {
+      this.setState({ persons: persons.data });
     });
   }
 
@@ -45,16 +64,22 @@ class App extends React.Component {
     return persons.filter(person => person.name.toLowerCase().includes(rajaus));
   }
 
+  changeNumber(newPerson)
+
   onSubmit(e) {
     e.preventDefault();
-    const persons = this.state.persons.concat({
+    const newPerson = {
       name: this.state.newName,
-      phone: this.state.newPhone
-    });
+      number: this.state.newNumber
+    };
 
-    this.setState({
-      persons: persons
-    });
+    const person = this.state.persons.find(
+      person => person.name === newPerson.name
+    );
+
+    person
+      ? Persons.update(person.id, newPerson).then(this.updatePersons)
+      : Persons.create(newPerson).then(this.updatePersons);
   }
 
   render() {
@@ -84,9 +109,9 @@ class App extends React.Component {
           <div>
             numero:
             <input
-              value={this.state.newPhone}
+              value={this.state.newNumber}
               onChange={event => {
-                this.setState({ newPhone: event.target.value });
+                this.setState({ newNumber: event.target.value });
               }}
             />
           </div>
@@ -94,7 +119,7 @@ class App extends React.Component {
             <button type="submit">lisää</button>
           </div>
         </form>
-        <Numerot persons={this.getList()} />
+        <Numerot persons={this.getList()} removePerson={this.removePerson} />
       </div>
     );
   }
