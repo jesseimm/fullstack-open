@@ -87,7 +87,8 @@ class App extends React.Component {
     if (id) {
       Persons.update(id, newPerson)
         .then(this.updatePersons)
-        .then(this.notify("jeejee"));
+        .then(this.notify("Number was changed."))
+        .catch(() => this.notify("Error. Did someone remove this person?"));
     }
     return id;
   }
