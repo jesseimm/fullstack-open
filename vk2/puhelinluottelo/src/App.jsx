@@ -1,5 +1,13 @@
 import React from "react";
 import Persons from "./services/persons";
+import "./App.css";
+
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null;
+  }
+  return <div className="error">{message}</div>;
+};
 
 const Tietue = ({ person, removePerson }) => {
   return (
@@ -29,13 +37,15 @@ class App extends React.Component {
       persons: [],
       newName: "",
       newNumber: "",
-      rajaus: ""
+      rajaus: "",
+      notification: null
     };
 
     this.onSubmit = this.onSubmit.bind(this);
     this.getList = this.getList.bind(this);
     this.removePerson = this.removePerson.bind(this);
     this.updatePersons = this.updatePersons.bind(this);
+    this.notify = this.notify.bind(this);
   }
 
   componentDidMount() {
@@ -45,7 +55,7 @@ class App extends React.Component {
   }
 
   removePerson(id) {
-    Persons.remove(id);
+    Persons.remove(id).then(this.notify("Person was removed."));
     this.setState({
       persons: this.state.persons.filter(person => person.id !== id)
     });
@@ -75,9 +85,18 @@ class App extends React.Component {
   changeNumber(newPerson) {
     const id = this.getPersonId(newPerson);
     if (id) {
-      Persons.update(id, newPerson).then(this.updatePersons);
+      Persons.update(id, newPerson)
+        .then(this.updatePersons)
+        .then(this.notify("jeejee"));
     }
     return id;
+  }
+
+  notify(message) {
+    this.setState({ notification: message });
+    setTimeout(() => {
+      this.setState({ notification: null });
+    }, 3000);
   }
 
   onSubmit(e) {
@@ -88,7 +107,9 @@ class App extends React.Component {
     };
 
     if (!this.changeNumber(newPerson)) {
-      Persons.create(newPerson).then(this.updatePersons);
+      Persons.create(newPerson)
+        .then(this.updatePersons)
+        .then(this.notify("Person was added."));
     }
   }
 
@@ -97,6 +118,7 @@ class App extends React.Component {
       <div>
         <h2>Puhelinluettelo</h2>
         <div>
+          <Notification message={this.state.notification} />
           rajaa näytettäviä:
           <input
             value={this.state.rajaus}
