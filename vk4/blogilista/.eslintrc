@@ -2,5 +2,10 @@
     "extends": "airbnb",
     "rules": {
         "indent": ["error", 4]
+    },
+    "env": {
+        "es6": true,
+        "node": true,
+        "jest": true
     }
 }
