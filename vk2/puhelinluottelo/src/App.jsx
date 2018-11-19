@@ -11,8 +11,7 @@ const Notification = ({ message }) => {
 const Tietue = ({ person, removePerson }) => {
   return (
     <p>
-      {person.name}
-      {person.number}
+      {person.name} {person.number}
       <button onClick={() => removePerson(person.id)}>remove</button>
     </p>
   );
