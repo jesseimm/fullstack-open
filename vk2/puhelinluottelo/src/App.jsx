@@ -49,7 +49,6 @@ class App extends React.Component {
   componentDidMount() {
     Persons.getAll()
       .then(persons => {
-        console.log("persons", persons);
         this.setState({ persons: persons.data });
       })
       .catch(err => console.log(err));
@@ -111,7 +110,8 @@ class App extends React.Component {
     if (!this.changeNumber(newPerson)) {
       Persons.create(newPerson)
         .then(this.updatePersons)
-        .then(this.notify("Person was added."));
+        .then(this.notify("Person was added."))
+        .then(this.setState({ newName: "", newNumber: "" }));
     }
   }
 
