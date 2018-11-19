@@ -1,6 +1,5 @@
 import React from "react";
 import Persons from "./services/persons";
-import "./App.css";
 
 const Notification = ({ message }) => {
   if (message === null) {
@@ -49,9 +48,12 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    Persons.getAll().then(persons => {
-      this.setState({ persons: persons.data });
-    });
+    Persons.getAll()
+      .then(persons => {
+        console.log("persons", persons);
+        this.setState({ persons: persons.data });
+      })
+      .catch(err => console.log(err));
   }
 
   removePerson(id) {
