@@ -10,9 +10,12 @@ usersRouter.get('/', async (request, response) => {
 
 usersRouter.post('/', async ({ body }, response) => {
     try {
+        if (body.password.length < 3) {
+            return response.status(400)
+                .json({ error: 'password exceed two charecters' });
+        }
         const existingUser = await User
-            .find({ username: body.username })
-            .populate('blogs');
+            .find({ username: body.username });
         if (existingUser.length > 0) {
             return response.status(400)
                 .json({ error: 'username must be unique' });
@@ -24,7 +27,7 @@ usersRouter.post('/', async ({ body }, response) => {
         const user = new User({
             username: body.username,
             name: body.name,
-            adult: Boolean(body.adult),
+            adult: !!body.adult,
             passwordHash,
         });
 

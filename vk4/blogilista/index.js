@@ -9,6 +9,8 @@ const cors = require('cors');
 const config = require('./utils/config');
 const blogsRouter = require('./controllers/blogs');
 const usersRouter = require('./controllers/users');
+const { loginRouter } = require('./controllers/login');
+const { tokenExtractor } = require('./utils/middlewares');
 
 mongoose
     .connect(config.mongoUrl)
@@ -20,8 +22,11 @@ mongoose
 app.use(cors());
 app.use(bodyParser.json());
 
+app.use(tokenExtractor);
+
 app.use('/api/blogs', blogsRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/login', loginRouter);
 
 const server = http.createServer(app);
 

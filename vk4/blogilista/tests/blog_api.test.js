@@ -2,6 +2,7 @@ const supertest = require('supertest');
 const { app, server } = require('../index');
 const Blog = require('../models/blog');
 const User = require('../models/user');
+const { getToken } = require('../controllers/login');
 
 const api = supertest(app);
 
@@ -10,7 +11,7 @@ const {
 } = require('./test_helper');
 
 describe('BLOGS TESTS', () => {
-    let user;
+    let token;
     let newBlog;
 
     const blogsUri = '/api/blogs/';
@@ -19,10 +20,13 @@ describe('BLOGS TESTS', () => {
     beforeAll(async () => {
         await Blog.remove({});
 
-        const blogObjects = initialBlogs.map(blog => new Blog(blog));
-        await Promise.all(blogObjects.map(blog => blog.save()));
         const newUser = new User({ username: 'root', password: 'sekret' });
-        user = await newUser.save();
+        const user = await newUser.save();
+        token = getToken(user);
+
+        const blogObjects = initialBlogs
+            .map(blog => new Blog({ ...blog, user: user._id })); //eslint-disable-line
+        await Promise.all(blogObjects.map(blog => blog.save()));
         newBlog = {
             title: 'Promisen kirous',
             author: 'Tarvalds',
@@ -73,6 +77,7 @@ describe('BLOGS TESTS', () => {
             const initial = await blogsInDb();
             await api
                 .post(blogsUri)
+                .set('Authorization', `bearer ${token}`)
                 .send(newBlog)
                 .expect(201)
                 .expect('Content-Type', /application\/json/);
@@ -90,6 +95,7 @@ describe('BLOGS TESTS', () => {
 
             await api
                 .post(blogsUri)
+                .set('Authorization', `bearer ${token}`)
                 .send({
                     author, url, likes, userId,
                 })
@@ -106,6 +112,7 @@ describe('BLOGS TESTS', () => {
 
             const resp = await api
                 .post(blogsUri)
+                .set('Authorization', `bearer ${token}`)
                 .send({
                     title, author, url, userId,
                 })
@@ -123,6 +130,7 @@ describe('BLOGS TESTS', () => {
 
             await api
                 .delete(`${blogsUri}/${blog.id}`)
+                .set('Authorization', `bearer ${token}`)
                 .expect(204);
 
             const after = await blogsInDb();
@@ -204,6 +212,30 @@ describe('USER TESTS', () => {
                 .expect('Content-Type', /application\/json/);
 
             expect(result.body).toEqual({ error: 'username must be unique' });
+
+            const usersAfterOperation = await usersInDb();
+            expect(usersAfterOperation.length)
+                .toBe(usersBeforeOperation.length);
+        });
+
+        test('Password of under three chars should return error', async () => {
+            const usersBeforeOperation = await usersInDb();
+
+            const newUser = {
+                username: 'root',
+                name: 'Superuser',
+                adult: true,
+                password: '12',
+            };
+
+            const result = await api
+                .post('/api/users')
+                .send(newUser)
+                .expect(400)
+                .expect('Content-Type', /application\/json/);
+
+            expect(result.body)
+                .toEqual({ error: 'password exceed two charecters' });
 
             const usersAfterOperation = await usersInDb();
             expect(usersAfterOperation.length)
