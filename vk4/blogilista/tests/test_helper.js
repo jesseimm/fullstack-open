@@ -1,4 +1,5 @@
 const Blog = require('../models/blog');
+const User = require('../models/user');
 
 const contentTypes = {
     key: 'Content-Type',
@@ -42,6 +43,11 @@ const blogsInDb = async () => {
     return blogs.map(format);
 };
 
+const usersInDb = async () => {
+    const users = await User.find({});
+    return users;
+};
+
 module.exports = {
-    initialBlogs, format, nonExistingId, blogsInDb, contentTypes,
+    initialBlogs, format, nonExistingId, blogsInDb, contentTypes, usersInDb,
 };
