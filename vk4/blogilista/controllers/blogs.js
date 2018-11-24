@@ -43,17 +43,15 @@ blogsRouter.post('/', async (request, response) => {
                 .json({ error: 'token missing or invalid' });
         }
 
-        if (!body.title || !body.url || !body.userId) {
+        if (!body.title || !body.url) {
             return badRequest(response, 'mandatory parameter missing');
         }
 
-        const user = await User.findById(body.userId);
+        const user = await User.findById(decodedToken.id);
 
         const likes = body.likes ? body.likes : 0;
         const blog = new Blog({ ...body, likes, user: user._id }); //eslint-disable-line
-        const savedBlog = await blog
-            .save();
-        //    .populate('user');
+        const savedBlog = await blog.save();
 
         user.blogs = user.blogs.concat(savedBlog._id); //eslint-disable-line
         await user.save();

@@ -11,6 +11,7 @@ const blogsRouter = require('./controllers/blogs');
 const usersRouter = require('./controllers/users');
 const { loginRouter } = require('./controllers/login');
 const { tokenExtractor } = require('./utils/middlewares');
+const morgan = require('morgan');
 
 mongoose
     .connect(config.mongoUrl)
@@ -21,6 +22,12 @@ mongoose
 
 app.use(cors());
 app.use(bodyParser.json());
+morgan.token('body', req => JSON.stringify(req.body));
+const loggerFormat = ':method :url :body :status :response-time';
+app.use(morgan(loggerFormat, {
+    stream: process.stdout,
+}));
+
 
 app.use(tokenExtractor);
 
