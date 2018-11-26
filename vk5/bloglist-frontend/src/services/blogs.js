@@ -3,30 +3,45 @@ import axios from 'axios';
 const baseUrl = '/api/blogs';
 
 let token = null;
-
+let config = null;
 
 const getAll = () => {
   const request = axios.get(baseUrl);
   return request.then(response => response.data);
 };
 
-const create = async (newObject, informUser) => {
-  const config = {
-    headers: { Authorization: token },
-  };
-  try {
-    const response = await axios
-      .post(baseUrl, newObject, config);
+const create = async (newObject) => {
+  const response = await axios
+    .post(baseUrl, newObject, config);
 
-    informUser(`Adding new blog named titled ${newObject.title} succeeded`, 'success');
-    return response.data;
-  } catch (err) {
-    informUser('Adding new blog failed', 'error');
-  }
+  return response.data;
+};
+
+const update = async (blog) => {
+  const {
+    user, likes, author, title, url,
+  } = blog;
+  const newBlog = {
+    user, likes, author, title, url,
+  };
+
+  const response = await axios
+    .put(`${baseUrl}/${blog._id} `, newBlog, config);
+
+  return response.data;
+};
+
+const remove = async (id) => {
+  const response = await axios.delete(`${baseUrl}/${id}`, config);
+
+  return response.data;
 };
 
 const setToken = (newToken) => {
   token = `bearer ${newToken}`;
+  config = { headers: { Authorization: token } };
 };
 
-export default { getAll, create, setToken };
+export default {
+  getAll, create, update, setToken, remove,
+};

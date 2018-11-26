@@ -1,4 +1,5 @@
 import React from 'react';
+import blogService from '../services/blogs';
 
 const Blog = ({ blog }) => {
   const blogStyle = {
@@ -14,7 +15,12 @@ const Blog = ({ blog }) => {
       {blog.title}
       {' '}
       {blog.author}
-      <button type="button">{blog.likes} + Like</button>
+      <button
+        type="button"
+        onClick={() => { blogService.update({ ...blog, likes: blog.likes + 1 }); }}
+      >
+        Likes: {blog.likes} +Like
+      </button>
     </div>
   );
 };

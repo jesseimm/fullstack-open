@@ -16,8 +16,8 @@ class App extends React.Component {
       user: null,
       message: null,
       messageType: null,
-      loginVisible: false,
     };
+
     this.handleFieldChange = this.handleFieldChange.bind(this);
     this.login = this.login.bind(this);
     this.logout = this.logout.bind(this);
@@ -99,7 +99,7 @@ class App extends React.Component {
         </Togglable>
         <h2>blogs</h2>
         <Blogs>
-          {this.state.blogs}
+          {this.state.blogs.sort((a, b) => (a.likes >= b.likes ? -1 : 1))}
         </Blogs>
       </div>
     );
